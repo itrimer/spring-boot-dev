@@ -6,6 +6,7 @@
 	<groupId>com.demo</groupId>
 	<artifactId>spring-boot-dev</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
 	<name>spring-boot-dev</name>
 	<description>Demo project for Spring Boot</description>
@@ -14,6 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<spring.boot.version>1.5.0.BUILD-SNAPSHOT</spring.boot.version>
 	</properties>
 
 	<modules>
