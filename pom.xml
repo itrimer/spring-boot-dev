@@ -19,9 +19,10 @@
     </properties>
 
     <modules>
-        <module>spring-boot-1</module>
-        <module>spring-boot-2</module>
-        <module>spring-boot-3</module>
+        <module>spring-boot-first</module>
+        <module>spring-boot-i18n</module>
+        <module>spring-boot-h2</module>
+        <module>spring-boot-elastic-job</module>
     </modules>
 
     <build>
