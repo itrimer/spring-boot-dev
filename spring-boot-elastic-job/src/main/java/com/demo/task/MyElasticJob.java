@@ -11,9 +11,25 @@ import org.slf4j.LoggerFactory;
  */
 public class MyElasticJob implements SimpleJob {
     Logger logger = LoggerFactory.getLogger(MyElasticJob.class);
+    private static String pi = "0";
     private String vvvvv = "0";
     private String thread_name = "0";
+    static int cnt = 0;
+    long rt = 0L;
 
+    public MyElasticJob() {
+        synchronized (pi) {
+            try {
+                Thread.sleep((long) (Math.random() * 100000L));
+            } catch (InterruptedException e) {
+
+            }
+
+            logger.error("运行构造方法。。。");
+            rt = System.currentTimeMillis();
+            ++cnt;
+        }
+    }
 
     @Override
     public void execute(ShardingContext context) {
@@ -24,8 +40,8 @@ public class MyElasticJob implements SimpleJob {
             thread_name = Thread.currentThread().getId() + "," + Thread.currentThread().getName();
         }
 
-        System.out.println(thread_name + "==alive==" + Thread.currentThread().getId() + "," + Thread.currentThread().getName()
-                + "=item=" + context.getShardingItem()
-        );
+        thread_name += " rt=" + Thread.currentThread().getId() + "," + Thread.currentThread().getName()
+                + "=item=" + context.getShardingItem();
+        logger.error(thread_name);
     }
 }
