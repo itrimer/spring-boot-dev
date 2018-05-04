@@ -1,0 +1,21 @@
+spring:
+    datasource:
+      url: jdbc:h2:mem:dev
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+
+    jpa:
+      database: h2
+      show-sql: true
+      hibernate:
+        ddl-auto: update
+        naming:
+          strategy: org.hibernate.cfg.DefaultComponentSafeNamingStrategy
+      properties:
+         hibernate:
+            dialect: org.hibernate.dialect.H2Dialect
+
+    thymeleaf:
+       cache: false
+       mode: LEGACYHTML5
