@@ -23,6 +23,7 @@
         <module>spring-boot-i18n</module>
         <module>spring-boot-h2</module>
         <module>spring-boot-elastic-job</module>
+        <module>spring-boot-shiro</module>
     </modules>
 
     <build>
