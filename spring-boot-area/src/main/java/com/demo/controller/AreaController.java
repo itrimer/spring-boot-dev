@@ -1,8 +1,10 @@
 package com.demo.controller;
 
-import com.demo.dao.AreaDao;
+import com.demo.manager.BaAreaManager;
 import com.demo.model.AreaInfo;
 import com.demo.model.BaArea;
+import com.demo.vo.ResponseObject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,40 +21,34 @@ import java.util.List;
 @Controller
 @RequestMapping("/area")
 public class AreaController {
-    @Autowired
-    private AreaDao areaDao;
+	@Autowired
+	private BaAreaManager baAreaManager;
 
-    @ResponseBody
-    @RequestMapping("/")
-    public List<BaArea> index(Model model) {
-        Iterable<BaArea> iterator = areaDao.findAll();
+	@ResponseBody
+	@RequestMapping("/")
+	public List<BaArea> index(Model model) {
+		Iterable<BaArea> iterator = baAreaManager.findAll();
 
-        List<BaArea> list = new ArrayList<>();
-        iterator.forEach(single -> {
-            list.add(single);
-        });
-        return list;
-    }
+		List<BaArea> list = new ArrayList<>();
+		iterator.forEach(single -> {
+			list.add(single);
+		});
+		return list;
+	}
 
-    @ResponseBody
-    @RequestMapping("/save")
-    public String save() {
-        // 内存数据库操作
-        BaArea article = areaDao.save(new BaArea("title1", "content1"));
-        article = areaDao.save(new BaArea("title2", "content2"));
-        article = areaDao.save(new BaArea("title3", "content3"));
-        article = areaDao.save(new BaArea("title4", "content4"));
-        article = areaDao.save(new BaArea("title5", "content5"));
+	@ResponseBody
+	@RequestMapping("/{areaId}")
+	public ResponseObject<AreaInfo> get(@PathVariable(value = "areaId") String areaId) {
+		ResponseObject<AreaInfo> resp = new ResponseObject<>();
+		BaArea baArea = baAreaManager.findOne(areaId);
+		if (baArea == null) {
+			return resp.setResult(404, "地址不存在或被删除");
+		}
 
-        return "save ok";
-    }
+		AreaInfo areaInfo = new AreaInfo();
+		BeanUtils.copyProperties(baArea, areaInfo);
 
-    @ResponseBody
-    @RequestMapping("/save/{areaId}")
-    public AreaInfo get(@PathVariable(value = "areaId") String areaId) {
-        BaArea areaInfo = areaDao.findOne(areaId);
-
-        return null;
-    }
-
+		resp.setData(areaInfo);
+		return resp;
+	}
 }

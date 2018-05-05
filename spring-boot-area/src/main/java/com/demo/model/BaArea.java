@@ -25,9 +25,10 @@ public class BaArea {
 	public BaArea() {
 	}
 
-	public BaArea(String id, String areaName) {
+	public BaArea(String id, String areaName, String parentId) {
 		this.id = id;
 		this.areaName = areaName;
+		this.parentId = parentId;
 	}
 
 	public String getId() {
