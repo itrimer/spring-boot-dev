@@ -1,37 +1,33 @@
-package com.demo.model;
+package com.demo.vo;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Entity
 public class AreaInfo {
 
-	@Id
 	private String id;
-	private String provinceId;
-	private String simpleName;
-	private String areaCode;
-	private String cityId;
-	private String remark;
-	private String prePinYin;
-	private String pinYin;
-	private String level;
 	private String parentId;
 	private String areaName;
+	private String simpleName;
+	private String areaCode;
+	private Integer level;
+	private String prePinYin;
+	private String pinYin;
 	private String simplePy;
-	private String zipCode;
-	private String countyId;
 	private String lon;
 	private String lat;
 	private String wholeName;
+	private String remark;
+	private String zipCode;
+	private String provinceId;
+	private String cityId;
+	private String countyId;
 
 
 	public AreaInfo() {
 	}
 
-	public AreaInfo(String id, String areaName) {
+	public AreaInfo(String id, String areaName, String parentId) {
 		this.id = id;
 		this.areaName = areaName;
+		this.parentId = parentId;
 	}
 
 	public String getId() {
@@ -106,11 +102,11 @@ public class AreaInfo {
 		this.pinYin = pinYin;
 	}
 
-	public String getLevel() {
+	public Integer getLevel() {
 		return level;
 	}
 
-	public void setLevel(String level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
 

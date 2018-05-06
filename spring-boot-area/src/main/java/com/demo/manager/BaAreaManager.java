@@ -11,4 +11,6 @@ public interface BaAreaManager extends BaseManager<BaArea, String, BaAreaDao>{
 	public BaArea findOne(String id);
 
 	public Iterable<BaArea> findAll();
+
+	public BaArea save(BaArea baArea);
 }

@@ -12,7 +12,7 @@ public class BaArea {
 	private String simpleName;
 	private String parentId;
 	private String prePinYin;
-	private String level;
+	private Integer level;
 	private String pinYin;
 	private String simplePy;
 	private String areaCode;
@@ -25,10 +25,11 @@ public class BaArea {
 	public BaArea() {
 	}
 
-	public BaArea(String id, String areaName, String parentId) {
+	public BaArea(String id, String areaName, String parentId, Integer level) {
 		this.id = id;
 		this.areaName = areaName;
 		this.parentId = parentId;
+		this.level = level;
 	}
 
 	public String getId() {
@@ -87,11 +88,11 @@ public class BaArea {
 		this.pinYin = pinYin;
 	}
 
-	public String getLevel() {
+	public Integer getLevel() {
 		return level;
 	}
 
-	public void setLevel(String level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
 

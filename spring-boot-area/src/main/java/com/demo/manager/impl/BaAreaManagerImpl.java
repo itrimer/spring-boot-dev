@@ -26,4 +26,9 @@ public class BaAreaManagerImpl implements BaAreaManager {
 	public Iterable<BaArea> findAll(){
 		return getDao().findAll();
 	}
+
+	@Override
+	public BaArea save(BaArea baArea) {
+		return getDao().save(baArea);
+	}
 }
