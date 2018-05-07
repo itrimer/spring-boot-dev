@@ -1,20 +1,24 @@
 package com.demo.controller;
 
 import com.demo.manager.BaAreaManager;
+import com.demo.util.StringUtils;
 import com.demo.vo.AreaInfo;
 import com.demo.model.BaArea;
 import com.demo.vo.ResponseObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * Created by zhigang.huang on 2018/05/04.
@@ -22,6 +26,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/area")
 public class AreaController {
+	private static Logger logger = LoggerFactory.getLogger(AreaController.class);
 	@Autowired
 	private BaAreaManager baAreaManager;
 
@@ -37,12 +42,54 @@ public class AreaController {
 		return list;
 	}
 
+	protected Map<String, String> getParameterMap(HttpServletRequest request) throws Exception {
+		Map<String, String> resultMap = new HashMap<>();
+		Map<String, String[]> tempMap = request.getParameterMap();
+		Set<String> keys = tempMap.keySet();
+		for (String key : keys) {
+			String value = request.getParameter(key);
+			resultMap.put(key, value);
+		}
+		return resultMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/search")
+	public Map<String, Object> search(HttpServletRequest request) {
+		Map<String, Object> result = new HashMap<>();
+		Page<AreaInfo> pagination = null;
+
+		try {
+			String spageNo = request.getParameter("pageNo");
+			String spageSize = request.getParameter("pageSize");
+			int pageNo = StringUtils.isNumeric(spageNo) ? Integer.parseInt(spageNo) : 1;
+			if(pageNo < 0){
+				pageNo = 1;
+			}
+			int pageSize = StringUtils.isNumeric(spageSize) ? Integer.parseInt(spageSize) : 10;
+			if(pageSize <= 1){
+				pageSize = 10;
+			}
+
+			Map<String, String> params = getParameterMap(request);
+			pagination = baAreaManager.query(params, pageNo, pageSize);
+
+			result.put("code", "0");
+			result.put("msg", "OK");
+			result.put("data", pagination);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return result;
+	}
+
+
 	@ResponseBody
 	@RequestMapping("/get/{areaId}")
 	public ResponseObject<AreaInfo> get(@PathVariable(value = "areaId") String areaId) {
 		ResponseObject<AreaInfo> resp = new ResponseObject<>();
 
-		AreaInfo areaInfo = buildArea(areaId, null);
+		AreaInfo areaInfo = baAreaManager.buildArea(areaId, null);
 		if (areaInfo == null) {
 			return resp.setResult(404, "地址不存在或被删除");
 		}
@@ -51,42 +98,6 @@ public class AreaController {
 		return resp;
 	}
 
-	private AreaInfo buildArea(String areaId, AreaInfo areaInfo) {
-		BaArea baArea = baAreaManager.findOne(areaId);
-		if(baArea == null){
-			return areaInfo;
-		}
-
-		if(areaInfo == null) {
-			areaInfo = new AreaInfo();
-		}
-		if(null == areaInfo.getId()){
-			BeanUtils.copyProperties(baArea, areaInfo);
-		}
-		areaInfo.setWholeName(buildWholeName(areaInfo.getWholeName(), baArea.getAreaName()));
-		if(baArea.getLevel() == 1){
-			areaInfo.setProvinceId(baArea.getId());
-		}
-		if(baArea.getLevel() == 2){
-			areaInfo.setCityId(baArea.getId());
-		}
-		if(baArea.getLevel() == 3){
-			areaInfo.setCountyId(baArea.getId());
-		}
-		if("0".equals(baArea.getParentId())){
-			return areaInfo;
-		}
-		return buildArea(baArea.getParentId(), areaInfo);
-	}
-
-	private String buildWholeName(String targetName, String parentAreaName) {
-		if(StringUtils.isEmpty(targetName)){
-			return parentAreaName;
-		}
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(parentAreaName).append(" ").append(targetName);
-		return stringBuilder.toString();
-	}
 
 	@ResponseBody
 	@RequestMapping("/save")
