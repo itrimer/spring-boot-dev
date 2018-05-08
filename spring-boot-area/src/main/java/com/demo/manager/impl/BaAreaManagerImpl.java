@@ -7,7 +7,6 @@ import com.demo.util.PageUtils;
 import com.demo.util.StringUtils;
 import com.demo.vo.AreaInfo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,26 @@ public class BaAreaManagerImpl implements BaAreaManager {
 	public Page<AreaInfo> query(final Map<String, String> params, int pageNo, int pageSize) throws Exception {
 		final PageRequest pageRequest = PageUtils.buildPageRequest(pageNo, pageSize);
 
-		Page<BaArea> pageQueryRst = baAreaDao.findAll(new Specification<BaArea>() {
+		Page<BaArea> pageQueryRst = baseQuery(params, pageNo, pageSize);
+
+		List<AreaInfo> areaInfos = new ArrayList<>();
+		Iterator<BaArea> iterator = pageQueryRst.iterator();
+		while (iterator.hasNext()){
+			BaArea baArea = iterator.next();
+			AreaInfo areaInfo = buildArea(baArea.getAreaId(), null);
+			if(areaInfo != null) {
+				areaInfos.add(areaInfo);
+			}
+		}
+
+		return new PageImpl<>(areaInfos, pageRequest, pageQueryRst.getTotalElements());
+	}
+
+	@Override
+	public Page<BaArea> baseQuery(final Map<String, String> params, int pageNo, int pageSize) throws Exception {
+		final PageRequest pageRequest = PageUtils.buildPageRequest(pageNo, pageSize);
+
+		return baAreaDao.findAll(new Specification<BaArea>() {
 			@Override
 			public Predicate toPredicate(Root<BaArea> root,
 										 CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -64,9 +82,25 @@ public class BaAreaManagerImpl implements BaAreaManager {
 					Predicate qw = cb.like(path, "%" + params.get("areaName") + "%");
 					q.add(qw);
 				}
-				if (StringUtils.isNotEmpty(params.get("prePinYin"))) {
-					Path<String> path = root.get("prePinyin");
-					Predicate qw = cb.equal(path, params.get("prePinYin"));
+				if (StringUtils.isNotEmpty(params.get("pinYin"))) {
+					Path<String> path = root.get("pinYin");
+					Predicate qw = cb.like(path, "%" + params.get("pinYin") + "%");
+					q.add(qw);
+				}
+				if (StringUtils.isNotEmpty(params.get("simplePy"))) {
+					Path<String> path = root.get("simplePy");
+					Predicate qw = cb.equal(path, params.get("simplePy"));
+					q.add(qw);
+				}
+				String prePinYin = params.get("prePinYin");
+				if (StringUtils.isNotEmpty(prePinYin)) {
+					Path<String> path = root.get("prePinYin");
+					Predicate qw = null;
+					if("null".equals(prePinYin)) {
+						qw = cb.isNull(path);
+					} else {
+						qw = cb.equal(path, prePinYin);
+					}
 					q.add(qw);
 				}
 
@@ -76,19 +110,6 @@ public class BaAreaManagerImpl implements BaAreaManager {
 				return null;
 			}
 		}, pageRequest);
-
-		List<AreaInfo> areaInfos = new ArrayList<>();
-
-		Iterator<BaArea> iterator = pageQueryRst.iterator();
-		while (iterator.hasNext()){
-			BaArea baArea = iterator.next();
-			AreaInfo areaInfo = buildArea(baArea.getId(), null);
-			if(areaInfo != null) {
-				areaInfos.add(areaInfo);
-			}
-		}
-
-		return new PageImpl<>(areaInfos, pageRequest, pageQueryRst.getTotalElements());
 	}
 
 	@Override
@@ -101,18 +122,18 @@ public class BaAreaManagerImpl implements BaAreaManager {
 		if(areaInfo == null) {
 			areaInfo = new AreaInfo();
 		}
-		if(null == areaInfo.getId()){
+		if(null == areaInfo.getAreaId()){
 			BeanUtils.copyProperties(baArea, areaInfo);
 		}
 		areaInfo.setWholeName(buildWholeName(areaInfo.getWholeName(), baArea.getAreaName()));
 		if(baArea.getLevel() == 1){
-			areaInfo.setProvinceId(baArea.getId());
+			areaInfo.setProvinceId(baArea.getAreaId());
 		}
 		if(baArea.getLevel() == 2){
-			areaInfo.setCityId(baArea.getId());
+			areaInfo.setCityId(baArea.getAreaId());
 		}
 		if(baArea.getLevel() == 3){
-			areaInfo.setCountyId(baArea.getId());
+			areaInfo.setCountyId(baArea.getAreaId());
 		}
 		if("0".equals(baArea.getParentId())){
 			return areaInfo;
@@ -127,5 +148,10 @@ public class BaAreaManagerImpl implements BaAreaManager {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(parentAreaName).append(" ").append(targetName);
 		return stringBuilder.toString();
+	}
+
+	@Override
+	public int updatePinyin(String areaId, String pinYin, String prePinYin, String simplePy){
+		return baAreaDao.updatePinyin(areaId, pinYin, prePinYin, simplePy);
 	}
 }

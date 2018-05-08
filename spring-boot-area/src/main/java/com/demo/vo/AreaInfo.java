@@ -2,7 +2,7 @@ package com.demo.vo;
 
 public class AreaInfo {
 
-	private String id;
+	private String areaId;
 	private String parentId;
 	private String areaName;
 	private String simpleName;
@@ -25,17 +25,17 @@ public class AreaInfo {
 	}
 
 	public AreaInfo(String id, String areaName, String parentId) {
-		this.id = id;
+		this.areaId = id;
 		this.areaName = areaName;
 		this.parentId = parentId;
 	}
 
-	public String getId() {
-		return id;
+	public String getAreaId() {
+		return areaId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setAreaId(String areaId) {
+		this.areaId = areaId;
 	}
 
 	public String getProvinceId() {

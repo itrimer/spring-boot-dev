@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface BaAreaDao extends CrudRepository<BaArea, String>, JpaSpecificationExecutor<BaArea> {
 
-	@Query(value = "select s from BaArea s where s.prePinYin is null")
-	public List<BaArea> selectPinyinIsNull();
+	@Query(value = "select s.areaId from BaArea s where s.prePinYin is null")
+	public List<String> selectPinyinIsNull();
 
 	@Transactional
 	// 使用query 注解进行update 或者 delete 语句时，需要添加 modifying 注解修饰

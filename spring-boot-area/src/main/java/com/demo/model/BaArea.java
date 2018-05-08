@@ -1,5 +1,6 @@
 package com.demo.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -7,37 +8,50 @@ import javax.persistence.Id;
 public class BaArea {
 
 	@Id
-	private String id;
+	@Column(name="area_id")
+	private String areaId;
+	@Column(name="area_name")
 	private String areaName;
+	@Column(name="simple_name")
 	private String simpleName;
+	@Column(name="parent_id")
 	private String parentId;
+	@Column(name="pre_pin_yin")
 	private String prePinYin;
+	@Column(name="level")
 	private Integer level;
+	@Column(name="pin_yin")
 	private String pinYin;
+	@Column(name="simple_py")
 	private String simplePy;
+	@Column(name="area_code")
 	private String areaCode;
+	@Column(name="lon")
 	private String lon;
+	@Column(name="lat")
 	private String lat;
+	@Column(name="remark")
 	private String remark;
+	@Column(name="zip_code")
 	private String zipCode;
 
 
 	public BaArea() {
 	}
 
-	public BaArea(String id, String areaName, String parentId, Integer level) {
-		this.id = id;
+	public BaArea(String areaId, String areaName, String parentId, Integer level) {
+		this.areaId = areaId;
 		this.areaName = areaName;
 		this.parentId = parentId;
 		this.level = level;
 	}
 
-	public String getId() {
-		return id;
+	public String getAreaId() {
+		return areaId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setAreaId(String areaId) {
+		this.areaId = areaId;
 	}
 
 	public String getSimpleName() {

@@ -2,19 +2,12 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:h2:mem:dev
+    url: jdbc:mysql://localhost:3306/dev?characterEncoding=UTF-8
 #配置数据库驱动
-    driver-class-name: org.h2.Driver
+    driver-class-name: com.mysql.jdbc.Driver
 #配置数据库用户名
-    username: sa
+    username: root
 #配置数据库密码
-    password:
-#配置能远程访问
-  h2:
-    console:
-      settings:
-        web-allow-others: true
-#配置访问地址
-    path: /h2-console
-#配置项目启动 h2就启动
-    enabled: true
+    password: root
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
