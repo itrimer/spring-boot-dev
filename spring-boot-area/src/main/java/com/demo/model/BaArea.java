@@ -3,6 +3,7 @@ package com.demo.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class BaArea {
@@ -34,6 +35,10 @@ public class BaArea {
 	private String remark;
 	@Column(name="zip_code")
 	private String zipCode;
+	@Column(name="create_time")
+	private Date createTime;
+	@Column(name="update_time")
+	private Date updateTime;
 
 
 	public BaArea() {
@@ -150,4 +155,19 @@ public class BaArea {
 		this.lat = lat;
 	}
 
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
 }
