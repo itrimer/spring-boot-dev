@@ -10,6 +10,7 @@ import com.demo.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
@@ -37,6 +38,8 @@ public class ProductController {
     private InventoryDao inventoryDao;
     @Autowired
     private InventoryManager inventoryManager;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @ResponseBody
     @RequestMapping("/add")
@@ -111,7 +114,7 @@ public class ProductController {
             return resultMap;
         }
         try {
-            String doResut = inventoryManager.addInventory(inventory.getProductId(), inventory.getQty());
+            String doResut = inventoryManager.addInventoryWithVersion(inventory.getProductId(), inventory.getQty());
             if ("OK".equals(doResut)) {
                 resultMap.put("code", "0");
                 resultMap.put("error_msg", "OK");
@@ -150,7 +153,7 @@ public class ProductController {
             return resultMap;
         }
         try {
-            String doResut = inventoryManager.lockInventory(productId, qty);
+            String doResut = inventoryManager.lockInventoryWithRedis(productId, qty);
             if ("OK".equals(doResut)) {
                 resultMap.put("code", "0");
                 resultMap.put("error_msg", "OK");
@@ -168,6 +171,18 @@ public class ProductController {
             resultMap.put("code", "510");
             resultMap.put("error_msg", "发生异常：" + e.getMessage());
         }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping("/redis")
+    public Map<String, Object> redis() {
+        Map<String, Object> resultMap = new HashMap<>();
+        String key = "key1";
+        redisTemplate.opsForValue().set(key, "test");
+
+        Object v = redisTemplate.opsForValue().get(key);
+        resultMap.put(key, v);
         return resultMap;
     }
 }
